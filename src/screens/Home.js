@@ -50,7 +50,7 @@ export default class Home extends Component<{}> {
     }
     componentWillMount() {
         this.RecuperarCategorias_Todas()
-        //this.RecuperarProductos_Todos()
+        this.RecuperarProductos_Todos()
         this.CalcularTotal()
     }
     componentDidMount() {
@@ -95,11 +95,23 @@ export default class Home extends Component<{}> {
             },
             body: JSON.stringify({})
         }
-        fetch(URL_WS + '/get_productos_todos', parametros)
+        fetch(URL_WS + '/ws/get_productos_todos', parametros)
             .then((response) => response.json())
             .then((data) => {
+                console.log(data)
                 this.setState({ productos_todos: data.productos, buscando: false })
             })
+    }
+    SeleccionarCategoriaHija = (cod_categoria, Seleccionado) => {
+
+        var categorias = this.state.categorias.filter(c => {
+            if (c.cod_categoria == cod_categoria)
+                c["Seleccionado"] = Seleccionado == 1 ? 0 : 1
+            else
+                c["Seleccionado"] = 0
+            return c
+        })
+        this.setState({ categorias: [], productos: [] }, () => this.setState({ categorias: categorias, productos: this.state.productos_todos.filter(p => p.cod_categoria == cod_categoria) }))
     }
     NuevaCuenta=()=>{
         this.setState({OpcionesVisible:false})
@@ -157,8 +169,8 @@ export default class Home extends Component<{}> {
                         {this.state.categorias.map((c, index) =>
                             <View key={c.cod_categoria}>
                                 <TouchableOpacity onPress={() => this.SeleccionarCategoriaHija(c.cod_categoria, c.Seleccionado)}
-                                    activeOpacity={0.7} style={{ backgroundColor: '#FFF', flexDirection: 'row', alignItems: 'center', marginRight: 1 }}>
-                                    <Image source={{uri:URL_WS+'/images/'+c.imagen_url}} resizeMode="stretch" style={{height:50,width:50}}/>
+                                    activeOpacity={0.7} style={{ backgroundColor: '#FFF', flexDirection: 'row', alignItems: 'center', marginRight: 1,marginVertical:10 }}>
+                                    {/* <Image source={{uri:URL_WS+'/images/'+c.imagen_url}}  style={{height:60,width:60,borderRadius:5,marginHorizontal:5}}/> */}
                                     <Text style={{ color: c.Seleccionado == 1 ? '#1abc9c' : '#95a5a6', flex: 1, fontWeight: 'bold', paddingHorizontal: 5, marginLeft: 10, paddingVertical: 10 }}>{c.nombre_categoria}</Text>
                                     <IconMaterial
                                         name={c.Seleccionado != 1 ? 'chevron-down' : 'chevron-up'}

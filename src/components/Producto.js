@@ -133,21 +133,21 @@ export default class Producto extends Component {
                 <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', marginBottom: 0, marginTop: 5, padding: 5 }}>
 
                     <Image
-                        //source={{ uri: 'http://image.flaticon.com/icons/png/512/66/66550.png' }}
-                        source={require('../images/plato_default.png')}
+                        source={{ uri: URL_WS+'/images/'+this.props.producto.imagen_url }}
+                        //source={require('../images/plato_default.png')}
                         style={{
                             marginLeft: 10,
                             width: AVATAR_SIZE, height: AVATAR_SIZE
                         }} />
 
                     <View style={{ flexDirection: 'column', marginHorizontal: 10, }}>
-                        <Text style={{ color: '#95a5a6', fontWeight: 'bold' }}>{this.props.producto.Nom_Producto}</Text>
-                        <Text style={{ color: '#95a5a6', }}>{moneda + (parseFloat(this.props.producto.PrecioUnitario)).toFixed(2)}</Text>
+                        <Text style={{ color: '#95a5a6', fontWeight: 'bold' }}>{this.props.producto.nombre}</Text>
+                        <Text style={{ color: '#95a5a6', }}>{this.props.producto.simbolo + (parseFloat(this.props.producto.valor_precio)).toFixed(2)}</Text>
                     </View>
 
                 </View>
 
-                {(this.props.producto.DETALLES == 0 && this.props.producto.PRECIOS == 1)
+                {(this.props.producto.detalles == 0 && this.props.producto.precios == 1)
                     ? <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         {this.state.Cantidad > 0 &&
                             <TouchableOpacity onPress={() => this.RestarProducto()} style={{ paddingLeft: 50, marginRight: 10 }}>
