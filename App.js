@@ -1,57 +1,78 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+import React from 'react';
+import { Platform } from 'react-native';
+import { StackNavigator, TabNavigator,DrawerNavigator } from 'react-navigation';
 
-import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import LectorQR from './src/screens/LectorQR'
+import Home from './src/screens/Home'
+import Pedido from './src/screens/Pedido'
+import Splash from './src/screens/Splash'
+import Login from './src/screens/Login';
+import Mesas from './src/screens/Mesas';
+import ProductoDetalle from './src/screens/ProductoDetalle';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-export default class App extends Component<{}> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
-    );
+const Main = TabNavigator({
+  home: {
+    screen: Home,
+    path: 'home',
+  },
+  pedido: {
+    screen: Pedido,
+    path: 'pedido',
   }
-}
+}, {
+    tabBarPosition: 'bottom',
+    animationEnabled: false,
+    swipeEnabled:false,
+    tabBarOptions: {
+      activeTintColor: '#55efc4',
+      labelStyle: {
+        fontSize: 10,
+      },
+      style: {
+        backgroundColor: '#40407a',
+      },
+      showIcon: true,
+      showLabel: true,
+      indicatorStyle: { backgroundColor: 'transparent' }
+    },
+    lazy:true,
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+  });
+
+const App = StackNavigator(
+  {
+    splash: {
+      screen: Splash,
+    },
+    main: {
+      screen: Home,
+    },
+    lectorQR:{
+      screen:LectorQR
+    },
+    login:{
+      screen:Login
+    },
+    mesas:{
+      screen:Mesas
+    },
+    pedido: {
+      screen: Pedido,
+    },
+    producto_detalle:{
+      screen: ProductoDetalle
+    }
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+  {
+    initialRouteName: 'splash',
+    //headerMode: 'none',
+    /*
+   * Use modal on iOS because the card mode comes from the right,
+   * which conflicts with the drawer example gesture
+   */
+    mode: Platform.OS === 'ios' ? 'modal' : 'card',
+  });
+  
+
+
+export default App;
