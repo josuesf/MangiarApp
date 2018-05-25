@@ -6,15 +6,15 @@ const reducer = (state, action) => {
         producto_detalles=[]
         if(action.producto_detalles) producto_detalles = action.producto_detalles
         var found = state.productos.find(p => {
-            return (p.Id_Detalle === action.producto.Id_Detalle && p.Cod_Mesa == action.producto.Cod_Mesa && p.Numero==state.Numero_Comprobante);
+            return (p.id_detalle === action.producto.id_detalle && p.cod_mesa == action.producto.cod_mesa && p.numero==state.Numero_Comprobante);
         });
 
         if (found) {
             return {
                 ...state,
                 productos: state.productos.filter(p => {
-                    if (p.Id_Detalle == action.producto.Id_Detalle && p.Cod_Mesa == action.producto.Cod_Mesa && p.Numero==state.Numero_Comprobante) {
-                        p.Cantidad = action.producto.Cantidad
+                    if (p.id_detalle == action.producto.id_detalle && p.cod_mesa == action.producto.cod_mesa && p.numero==state.Numero_Comprobante) {
+                        p.cantidad = action.producto.cantidad
                     }
                     return p
                 }),
@@ -35,13 +35,12 @@ const reducer = (state, action) => {
 
     }
     if (action.type === "RESTAR_PRODUCTO") {
-
-        if (action.producto.Cantidad > 0) {
+        if (action.producto.cantidad > 0) {
             return {
                 ...state,
                 productos: state.productos.filter(p => {
-                    if (p.Id_Detalle == action.producto.Id_Detalle && p.Cod_Mesa == action.producto.Cod_Mesa && p.Numero==state.Numero_Comprobante) {
-                        p.Cantidad = action.producto.Cantidad
+                    if (p.id_detalle == action.producto.id_detalle && p.cod_mesa == action.producto.cod_mesa && p.numero==state.Numero_Comprobante) {
+                        p.cantidad = action.producto.cantidad
                     }
                     return p
                 }),
@@ -52,7 +51,7 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 productos: state.productos.filter(p => {
-                    if (p.Id_Detalle == action.producto.Id_Detalle && p.Cod_Mesa == action.producto.Cod_Mesa && p.Numero==state.Numero_Comprobante) {
+                    if (p.id_detalle == action.producto.id_detalle && p.cod_mesa == action.producto.cod_mesa && p.numero==state.Numero_Comprobante) {
                         return null
                     }
                     return p
@@ -67,13 +66,13 @@ const reducer = (state, action) => {
         return {
             ...state,
             productos: state.productos.filter(p => {
-                if (p.Id_Detalle == action.producto.Id_Detalle && p.Cod_Mesa == action.producto.Cod_Mesa && p.Numero==state.Numero_Comprobante) {
+                if (p.id_detalle == action.producto.id_detalle && p.cod_mesa == action.producto.cod_mesa && p.numero==state.Numero_Comprobante) {
                     return null
                 }
                 return p
             }),
             producto_detalles: state.producto_detalles.filter(p => {
-                if (p.Id_Referencia == action.producto.Id_Detalle) {
+                if (p.Id_Referencia == action.producto.id_detalle) {
                     return null
                 }
                 return p
@@ -87,8 +86,8 @@ const reducer = (state, action) => {
         return {
             ...state,
             last_event: 'MESA_SELECCIONADA',
-            Cod_Mesa: action.Cod_Mesa,
-            Nom_Mesa: action.Nom_Mesa,
+            cod_mesa: action.cod_mesa,
+            nombre_mesa: action.nombre_mesa,
             tipo_usuario: action.tipo_usuario || state.tipo_usuario
         }
     }
@@ -120,15 +119,15 @@ const reducer = (state, action) => {
         return {
             ...state,
             last_event: 'ADD_ESTADO_MESA',
-            Estado_Mesa:action.Estado_Mesa
+            estado_accion:action.estado_accion
         }
     }
     if(action.type=="LIBERAR_MESA"){
         return {
             ...state,
             last_event: 'LIBERAR_MESA',
-            productos:state.productos.filter(p=>p.Numero!=action.Numero),
-            producto_detalles:state.producto_detalles.filter(p=>p.Numero!=action.Numero)
+            productos:state.productos.filter(p=>p.numero!=action.numero),
+            producto_detalles:state.producto_detalles.filter(p=>p.numero!=action.numero)
         }
     }
     return state
@@ -140,12 +139,12 @@ export default createStore(reducer,
         producto_detalles:[],
         last_event: '',
         last_producto: null,
-        Cod_Mesa: '',
+        cod_mesa: '',
         id_usuario: undefined,
         nombre_usuario: undefined,
         tipo_usuario: undefined,
-        Nom_Mesa: undefined,
+        nombre_mesa: undefined,
         Numero_Comprobante:'',
         Nro_Pedido:1,
-        Estado_Mesa:''
+        estado_accion:''
     })

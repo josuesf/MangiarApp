@@ -60,10 +60,10 @@ export default class Home extends Component<{}> {
         })
     }
     CalcularTotal = () => {
-        productos = store.getState().productos.filter(p => p.Cod_Mesa == store.getState().Cod_Mesa && p.Numero==store.getState().Numero_Comprobante)
+        productos = store.getState().productos.filter(p => p.cod_mesa == store.getState().cod_mesa && p.numero==store.getState().Numero_Comprobante)
         this.setState({
-            total: productos.reduce((a, b) => a + (b.PrecioUnitario * b.Cantidad), 0),
-            cantidad_items: productos.reduce((a, b) => a + (b.Cantidad), 0),
+            total: productos.reduce((a, b) => a + (b.valor_precio * b.cantidad), 0),
+            cantidad_items: productos.reduce((a, b) => a + (b.cantidad), 0),
         })
 
     }
@@ -126,7 +126,6 @@ export default class Home extends Component<{}> {
     }
     render() {
         const { navigate,goBack } = this.props.navigation;
-        console.log(this.state.categorias)
         return (
             <View style={styles.container}>
                 <StatusBar
@@ -138,7 +137,7 @@ export default class Home extends Component<{}> {
                         <IconMaterial color={'#ffeaa7'} name='arrow-left' size={25} />
                     </TouchableOpacity>
                     <View style={{flex: 1, marginHorizontal: 10}}>
-                        <Text style={{ color: '#ffeaa7', fontWeight: 'bold' }}>{store.getState().Nom_Mesa}</Text>
+                        <Text style={{ color: '#ffeaa7', fontWeight: 'bold' }}>{store.getState().nombre_mesa}</Text>
                         <Text style={{ color: '#ffeaa7' }}>Cuenta {store.getState().Numero_Comprobante}</Text>
                     </View>
                     {store.getState().Numero_Comprobante!='' &&
@@ -187,7 +186,7 @@ export default class Home extends Component<{}> {
                                         <FlatList
                                             data={this.state.productos}
                                             renderItem={({ item }) => (
-                                                <Producto producto={item} Cod_Mesa={store.getState().Cod_Mesa} navigate={navigate} />
+                                                <Producto producto={item} cod_mesa={store.getState().cod_mesa} navigate={navigate} />
                                             )}
                                             keyExtractor={(item, index) => index}
                                         />

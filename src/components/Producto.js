@@ -18,57 +18,47 @@ const { width, height } = Dimensions.get('window')
 const AVATAR_SIZE = 50
 export default class Producto extends Component {
     state = {
-        Cantidad: 0
+        cantidad: 0
     }
     AgregarProducto = () => {
         var producto = this.props.producto
-        if (!producto.Id_Detalle) {
-            console.log(producto)
-            var Id_Detalle = producto.Id_Producto
+        if (!producto.id_detalle) {
+            var id_detalle = producto.producto_id
             var found = store.getState().productos.find(p => {
-                return (p.Id_Detalle == Id_Detalle && p.Estado_Pedido == 'CONFIRMA');
+                return (p.id_detalle == id_detalle && p.estado_detalle == 'CONFIRMA');
             });
             if (found) {
                 p = {
-                    Id_Detalle : parseInt(producto.Id_Producto + '' + store.getState().Nro_Pedido) + 1,
-                    Cod_Almacen: producto.Cod_Almacen,
-                    Cod_Marca: producto.Cod_Marca,
-                    Cod_Moneda: producto.Cod_Moneda,
-                    Cod_TipoOperatividad: producto.Cod_TipoOperatividad,
-                    Cod_TipoPrecio: producto.Cod_TipoPrecio,
-                    Cod_TipoProducto: producto.Cod_TipoProducto,
-                    Definicion: producto.Definicion,
-                    Des_CortaProducto: producto.Des_CortaProducto,
-                    Des_LargaProducto: producto.Des_LargaProducto,
-                    Id_Producto: producto.Id_Producto,
-                    Nom_Marca: producto.Nom_Marca,
-                    Nom_Moneda: producto.Nom_Moneda,
-                    Nom_Precio: producto.Nom_Precio,
-                    Nom_Producto: producto.Nom_Producto,
-                    PrecioUnitario: producto.PrecioUnitario,
-                    Simbolo: producto.Simbolo,
-                    Estado_Pedido: 'PENDIENTE'
+                    id_detalle : parseInt(producto.id_detalle + '' + store.getState().Nro_Pedido) + 1,
+                    almacen_cod: producto.almacen_cod,
+                    cod_marca: producto.cod_marca,
+                    cod_moneda: producto.cod_moneda,
+                    produto_id: producto.producto_id,
+                    nombre: producto.nombre,
+                    valor_precio: producto.valor_precio,
+                    simbolo: producto.simbolo,
+                    estado_detalle: 'PENDIENTE'
                 }
-                producto.Id_Detalle = p.Id_Detalle
+                producto.id_detalle = p.id_detalle
             }else{
                 p=producto
-                p.Id_Detalle=producto.Id_Producto
+                p.id_detalle=producto.producto_id
                 
             }
         }else{
             p=producto
         }
-        p.Estado_Pedido = 'PENDIENTE'
-        p.Cantidad = this.state.Cantidad + 1
-        p.Cod_Mesa = this.props.Cod_Mesa
-        p.Numero =store.getState().Numero_Comprobante
-        // var Id_Detalle = p.Id_Producto
+        p.estado_detalle = 'PENDIENTE'
+        p.cantidad = this.state.cantidad + 1
+        p.cod_mesa = this.props.cod_mesa
+        p.numero =store.getState().Numero_Comprobante
+        // var id_detalle = p.producto_id
         // var found = store.getState().productos.find(p => {
-        //     return (p.Id_Detalle == Id_Detalle && p.Estado_Pedido == 'CONFIRMA');
+        //     return (p.id_detalle == id_detalle && p.estado_detalle == 'CONFIRMA');
         // });
-        // p.Id_Detalle = found ? parseInt(p.Id_Producto + '' + store.getState().Nro_Pedido) + 1 : Id_Detalle
+        // p.id_detalle = found ? parseInt(p.producto_id + '' + store.getState().Nro_Pedido) + 1 : id_detalle
         this.setState({
-            Cantidad: p.Cantidad
+            cantidad: p.cantidad
         }, () => {
             store.dispatch({
                 type: 'ADD_PRODUCTO',
@@ -77,12 +67,14 @@ export default class Producto extends Component {
         })
     }
     RestarProducto = () => {
-        if (parseInt(this.state.Cantidad) > 0) {
+        if (parseInt(this.state.cantidad) > 0) {
             var producto = this.props.producto
-            producto.Cantidad = this.state.Cantidad - 1
-            producto.Cod_Mesa = this.props.Cod_Mesa
+            producto.cantidad = this.state.cantidad - 1
+            producto.cod_mesa = this.props.cod_mesa
+            producto.numero = store.getState().Numero_Comprobante
+            producto.id_detalle = this.state.id_detalle
             this.setState({
-                Cantidad: producto.Cantidad
+                cantidad: producto.cantidad
             }, () => {
                 store.dispatch({
                     type: 'RESTAR_PRODUCTO',
@@ -93,10 +85,10 @@ export default class Producto extends Component {
     }
     componentWillMount() {
         var found = store.getState().productos.find(p => {
-            return (p.Estado_Pedido != 'CONFIRMA' && p.Id_Producto == this.props.producto.Id_Producto && p.Cod_Mesa == this.props.Cod_Mesa);
+            return (p.estado_detalle != 'CONFIRMA' && p.producto_id == this.props.producto.producto_id && p.cod_mesa == this.props.cod_mesa);
         });
         if (found) {
-            this.setState({ Cantidad: parseInt(found.Cantidad) })
+            this.setState({ cantidad: parseInt(found.cantidad),id_detalle:found.id_detalle })
         }
     }
     componentDidMount() {
@@ -104,23 +96,23 @@ export default class Producto extends Component {
             if (this.refs.root) {
                 if ((store.getState().last_event == 'ADD_PRODUCTO' ||
                     store.getState().last_event == 'RESTAR_PRODUCTO') &&
-                    this.props.producto.Id_Producto == store.getState().last_producto.Id_Producto &&
-                    this.props.Cod_Mesa == store.getState().last_producto.Cod_Mesa) {
+                    this.props.producto.producto_id == store.getState().last_producto.producto_id &&
+                    this.props.cod_mesa == store.getState().last_producto.cod_mesa) {
                     this.setState({
-                        Cantidad: store.getState().last_producto.Cantidad
+                        cantidad: store.getState().last_producto.cantidad
                     })
                 }
                 if ((store.getState().last_event == 'DELETE_PRODUCTO') &&
-                    this.props.producto.Id_Producto == store.getState().last_producto.Id_Producto &&
-                    this.props.Cod_Mesa == store.getState().last_producto.Cod_Mesa) {
+                    this.props.producto.producto_id == store.getState().last_producto.producto_id &&
+                    this.props.cod_mesa == store.getState().last_producto.cod_mesa) {
                     this.setState({
-                        Cantidad: 0
+                        cantidad: 0
                     })
                 }
                 if ((store.getState().last_event == 'ADD_NUMERO_COMPROBANTE')) {
-                    if (this.props.producto.Estado_Pedido == 'CONFIRMA')
+                    if (this.props.producto.estado_detalle == 'CONFIRMA')
                         this.setState({
-                            Cantidad: 0
+                            cantidad: 0
                         })
                 }
             }
@@ -138,6 +130,7 @@ export default class Producto extends Component {
                         style={{
                             marginLeft: 10,
                             width: AVATAR_SIZE, height: AVATAR_SIZE
+                            ,borderRadius:10
                         }} />
 
                     <View style={{ flexDirection: 'column', marginHorizontal: 10, }}>
@@ -149,17 +142,17 @@ export default class Producto extends Component {
 
                 {(this.props.producto.detalles == 0 && this.props.producto.precios == 1)
                     ? <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        {this.state.Cantidad > 0 &&
+                        {this.state.cantidad > 0 &&
                             <TouchableOpacity onPress={() => this.RestarProducto()} style={{ paddingLeft: 50, marginRight: 10 }}>
                                 <IconMaterial color={"#55efc4"} name='minus-box-outline' size={25} />
                             </TouchableOpacity>}
-                        {this.state.Cantidad > 0 &&
-                            <Text style={{ fontWeight: 'bold' }} >{this.state.Cantidad}</Text>}
-                        <TouchableOpacity onPress={() => this.AgregarProducto()} style={{ marginHorizontal: 10, paddingLeft: this.state.Cantidad > 0 ? 0 : 50 }}>
+                        {this.state.cantidad > 0 &&
+                            <Text style={{ fontWeight: 'bold' }} >{this.state.cantidad}</Text>}
+                        <TouchableOpacity onPress={() => this.AgregarProducto()} style={{ marginHorizontal: 10, paddingLeft: this.state.cantidad > 0 ? 0 : 50 }}>
                             <IconMaterial color={"#55efc4"} name='plus-box-outline' size={25} />
                         </TouchableOpacity>
                     </View> :
-                    <TouchableOpacity onPress={() => this.props.navigate('producto_detalle', { producto: this.props.producto, Cod_Mesa: this.props.Cod_Mesa })}
+                    <TouchableOpacity onPress={() => this.props.navigate('producto_detalle', { producto: this.props.producto, cod_mesa: this.props.cod_mesa })}
                         style={{ marginHorizontal: 10, borderColor: '#55efc4', borderWidth: 2, marginLeft: 50, padding: 5, borderRadius: 5, flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={{ color: '#00b894', marginRight: 4 }} >Agregar</Text>
 

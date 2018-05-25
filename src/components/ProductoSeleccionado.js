@@ -23,16 +23,16 @@ export default class ProductoSeleccionado extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            Cantidad: this.props.producto.Cantidad,
-            producto_detalles: store.getState().producto_detalles.filter(p => p.Id_Referencia == this.props.producto.Id_Detalle)
+            cantidad: this.props.producto.cantidad,
+            producto_detalles: store.getState().producto_detalles.filter(p => p.Id_Referencia == this.props.producto.id_detalle)
         }
     }
 
     AgregarProducto = () => {
         var producto = this.props.producto
-        producto.Cantidad = this.state.Cantidad + 1
+        producto.cantidad = this.state.cantidad + 1
         this.setState({
-            Cantidad: producto.Cantidad
+            cantidad: producto.cantidad
         }, () => {
             store.dispatch({
                 type: 'ADD_PRODUCTO',
@@ -41,11 +41,11 @@ export default class ProductoSeleccionado extends Component {
         })
     }
     RestarProducto = () => {
-        if (parseInt(this.state.Cantidad) > 0) {
+        if (parseInt(this.state.cantidad) > 0) {
             var producto = this.props.producto
-            producto.Cantidad = this.state.Cantidad - 1
+            producto.cantidad = this.state.cantidad - 1
             this.setState({
-                Cantidad: producto.Cantidad
+                cantidad: producto.cantidad
             }, () => {
                 store.dispatch({
                     type: 'RESTAR_PRODUCTO',
@@ -69,31 +69,32 @@ export default class ProductoSeleccionado extends Component {
                 <View style={{ flexDirection: 'row', flex: 4, alignItems: 'center' }}>
 
                     <Image
-                        //source={{ uri: 'http://image.flaticon.com/icons/png/512/66/66550.png' }}
-                        source={require('../images/plato_default.png')}
+                        source={{ uri: URL_WS+'/images/'+this.props.producto.imagen_url }}
+                        //source={require('../images/plato_default.png')}
                         style={{
                             marginLeft: 10,
                             width: AVATAR_SIZE, height: AVATAR_SIZE
+                            ,borderRadius:10
                         }} />
 
                     <View style={{ flexDirection: 'column', marginHorizontal: 10, }}>
                         <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                            {this.props.producto.Estado_Pedido =='CONFIRMA' && <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#95a5a6' }} >{this.state.Cantidad+" "}</Text>}
-                            <Text style={{ color: '#95a5a6', fontWeight: 'bold' }}>{this.props.producto.Nom_Producto}</Text>
-                            <Text style={{ color: '#95a5a6', fontSize: 0, marginLeft: 2 }}>{moneda + (parseFloat(this.props.producto.PrecioUnitario)).toFixed(2)}</Text>
+                            {this.props.producto.estado_detalle =='CONFIRMA' && <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#95a5a6' }} >{this.state.cantidad+" "}</Text>}
+                            <Text style={{ color: '#95a5a6', fontWeight: 'bold' }}>{this.props.producto.nombre}</Text>
+                            <Text style={{ color: '#95a5a6', fontSize: 0, marginLeft: 2 }}>{moneda + (parseFloat(this.props.producto.valor_precio)).toFixed(2)}</Text>
                         </View>
 
-                        {this.state.producto_detalles.map((p, index) => <Text key={index} style={{ color: '#95a5a6', fontSize: 12 }} >{p.Cantidad + " " + p.Nom_Producto + " S./" + p.PrecioUnitario.toFixed(2)}</Text>)}
+                        {this.state.producto_detalles.map((p, index) => <Text key={index} style={{ color: '#95a5a6', fontSize: 12 }} >{p.cantidad + " " + p.nombre + " S./" + p.valor_precio.toFixed(2)}</Text>)}
 
 
-                        {this.props.producto.Estado_Pedido !='CONFIRMA' && <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            {parseInt(this.props.producto.Cantidad) > 1 &&
+                        {this.props.producto.estado_detalle !='CONFIRMA' && <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {parseInt(this.props.producto.cantidad) > 1 &&
                                 <TouchableOpacity onPress={() => this.RestarProducto()} style={{ marginRight: 10 }}>
                                     <IconMaterial color={"#00b894"} name='minus-box-outline' size={30} />
                                 </TouchableOpacity>
                             }
 
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#95a5a6' }} >{this.state.Cantidad}</Text>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#95a5a6' }} >{this.state.cantidad}</Text>
                             <TouchableOpacity onPress={() => this.AgregarProducto()} style={{ marginLeft: 10 }}>
                                 <IconMaterial color={"#00b894"} name='plus-box-outline' size={30} />
                             </TouchableOpacity>
@@ -109,7 +110,7 @@ export default class ProductoSeleccionado extends Component {
                     <Text style={{ fontWeight: 'bold', color: '#95a5a6' }}>
 
                         {moneda +
-                            (parseFloat(this.props.producto.PrecioUnitario) * parseFloat(this.props.producto.Cantidad)).toFixed(2)
+                            (parseFloat(this.props.producto.valor_precio) * parseFloat(this.props.producto.cantidad)).toFixed(2)
                         }
                     </Text>
                 </View>

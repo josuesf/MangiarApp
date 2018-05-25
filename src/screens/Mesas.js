@@ -72,75 +72,86 @@ export default class Mesas extends Component<{}> {
                 this.setState({ conectando: false, mesas: data.puntos_venta })
             })
     }
-    SeleccionarMesa = (Cod_Mesa, Nom_Mesa, Estado_Mesa) => {
-        store.dispatch({
-            type: 'ADD_NUMERO_COMPROBANTE',
-            Numero_Comprobante: '',
-        })
-        this.props.navigation.navigate('main', { productos_selec: [] })
-        // this.setState({ entrando_mesa: true })
-        // const parametros = {
-        //     method: 'POST',
-        //     headers: {
-        //         Accept: 'application/json',
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         Cod_Mesa: Cod_Mesa
-        //     })
-        // }
-        // fetch(URL_WS + '/get_productos_by_mesa', parametros)
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //         this.setState({ entrando_mesa: false })
-        //         store.dispatch({
-        //             type: 'MESA_SELECCIONADA',
-        //             Cod_Mesa: Cod_Mesa,
-        //             Nom_Mesa: Nom_Mesa
-        //         })
-        //         if (data.productos_selec.length > 0) {
-        //             store.dispatch({
-        //                 type: 'ADD_PRODUCTOS_SELECCIONADOS',
-        //                 productos: data.productos_selec.filter(p => p.Id_Referencia == 0),
-        //                 producto_detalles: data.productos_selec.filter(p => p.Id_Referencia != 0)
-        //             })
-        //             pedidos = data.productos_selec
-        //             this.setState({
-        //                 cuentas_mesa: pedidos.filter((p, i) => {
-        //                     if (i + 1 != pedidos.length) {
-        //                         if (p.Numero != pedidos[i + 1].Numero)
-        //                             return p
-        //                         else
-        //                             return null
-        //                     } else
-        //                         return p
-        //                 })
-        //             },()=>{
-        //                 if(this.state.cuentas_mesa.length==1){
-        //                     store.dispatch({
-        //                         type: 'ADD_NUMERO_COMPROBANTE',
-        //                         Numero_Comprobante: data.productos_selec[0].Numero,
-        //                     })
-        //                     this.props.navigation.navigate('main', { productos_selec: data.productos_selec })
-        //                 }else{
-        //                     this.setState({OpcionesVisible:true})
-        //                 }
-        //             })
+    SeleccionarMesa = (cod_mesa, nombre_mesa, estado_accion) => {
+        // store.dispatch({
+        //     type: 'MESA_SELECCIONADA',
+        //     cod_mesa: cod_mesa,
+        //     nombre_mesa: nombre_mesa
+        // })
+        // store.dispatch({
+        //     type: 'ADD_NUMERO_COMPROBANTE',
+        //     Numero_Comprobante: '',
+        // })
+        // this.props.navigation.navigate('main', { productos_selec: [] })
+
+        this.setState({ entrando_mesa: true })
+        const parametros = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                cod_mesa: cod_mesa
+            })
+        }
+        fetch(URL_WS + '/ws/get_productos_by_mesa', parametros)
+            .then((response) => response.json())
+            .then((data) => {
+                this.setState({ entrando_mesa: false })
+                store.dispatch({
+                    type: 'MESA_SELECCIONADA',
+                    cod_mesa: cod_mesa,
+                    nombre_mesa: nombre_mesa
+                })
+                if(data.err){
+                    console.log(data.err)
+                    return;
+                }
+                if (data.productos_selec.length > 0) {
+                    console.log(data.productos_selec)
+                    store.dispatch({
+                        type: 'ADD_PRODUCTOS_SELECCIONADOS',
+                        productos: data.productos_selec.filter(p => p.id_referencia == 0),
+                        producto_detalles: data.productos_selec.filter(p => p.id_referencia != 0)
+                    })
+                    pedidos = data.productos_selec
+                    this.setState({
+                        cuentas_mesa: pedidos.filter((p, i) => {
+                            if (i + 1 != pedidos.length) {
+                                if (p.numero != pedidos[i + 1].numero)
+                                    return p
+                                else
+                                    return null
+                            } else
+                                return p
+                        })
+                    },()=>{
+                        if(this.state.cuentas_mesa.length==1){
+                            store.dispatch({
+                                type: 'ADD_NUMERO_COMPROBANTE',
+                                Numero_Comprobante: data.productos_selec[0].numero,
+                            })
+                            this.props.navigation.navigate('main', { productos_selec: data.productos_selec })
+                        }else{
+                            this.setState({OpcionesVisible:true})
+                        }
+                    })
                     
-        //         } else {
-        //             store.dispatch({
-        //                 type: 'ADD_NUMERO_COMPROBANTE',
-        //                 Numero_Comprobante: '',
-        //             })
-        //             this.props.navigation.navigate('main', { productos_selec: data.productos_selec })
-        //         }
-        //     })
+                } else {
+                    store.dispatch({
+                        type: 'ADD_NUMERO_COMPROBANTE',
+                        Numero_Comprobante: '',
+                    })
+                    this.props.navigation.navigate('main', { productos_selec: data.productos_selec })
+                }
+            })
     }
-    AbrirCuentaMesa(Numero) {
+    AbrirCuentaMesa(numero) {
         this.setState({OpcionesVisible:false})
         store.dispatch({
             type: 'ADD_NUMERO_COMPROBANTE',
-            Numero_Comprobante: Numero,
+            Numero_Comprobante: numero,
         })
         this.props.navigation.navigate('main',{ productos_selec: [] })
     }
@@ -150,7 +161,7 @@ export default class Mesas extends Component<{}> {
             scanning: false,
             resultado: e.data,
             conectando: true,
-            Cod_Mesa: e.data.split(';')[2]
+            cod_mesa: e.data.split(';')[2]
         }, () => this.BuscarProductos());
     }
     DetectOrientation() {
@@ -206,7 +217,7 @@ export default class Mesas extends Component<{}> {
                         keyExtractor={(item, index) => index}
                         renderItem={({ item }) => (
                             <Mesa width_state={this.state.Width_Layout} height_state={this.state.Height_Layout} mesa={item}
-                                SeleccionarMesa={() => this.SeleccionarMesa(item.Cod_Mesa, item.Nom_Mesa, item.Estado_Mesa)} />
+                                SeleccionarMesa={() => this.SeleccionarMesa(item.cod_mesa, item.nombre_mesa, item.estado_accion)} />
                         )}
                     />
                 </View>
@@ -215,9 +226,9 @@ export default class Mesas extends Component<{}> {
                     onTouchOutside={() => this.setState({ OpcionesVisible: false })} >
                     <View>
                         {this.state.cuentas_mesa.map((c, i) =>
-                            <TouchableOpacity key={i} activeOpacity={0.5} onPress={() => this.AbrirCuentaMesa(c.Numero)}
+                            <TouchableOpacity key={i} activeOpacity={0.5} onPress={() => this.AbrirCuentaMesa(c.numero)}
                                 style={{ marginVertical: 10, backgroundColor: '#fff' }}>
-                                <Text style={{ fontWeight: 'bold', color: 'gray' }}>Cuenta {c.Numero}</Text>
+                                <Text style={{ fontWeight: 'bold', color: 'gray' }}>Cuenta {c.numero}</Text>
                             </TouchableOpacity>
                         )}
                     </View>
