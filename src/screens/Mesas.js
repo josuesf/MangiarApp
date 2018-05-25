@@ -109,7 +109,6 @@ export default class Mesas extends Component<{}> {
                     return;
                 }
                 if (data.productos_selec.length > 0) {
-                    console.log(data.productos_selec)
                     store.dispatch({
                         type: 'ADD_PRODUCTOS_SELECCIONADOS',
                         productos: data.productos_selec.filter(p => p.id_referencia == 0),

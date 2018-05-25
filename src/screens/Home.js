@@ -52,6 +52,8 @@ export default class Home extends Component<{}> {
         this.RecuperarCategorias_Todas()
         this.RecuperarProductos_Todos()
         this.CalcularTotal()
+        console.log(store.getState().Numero_Comprobante)
+        console.log(store.getState().productos)
     }
     componentDidMount() {
         store.subscribe(() => {
@@ -98,7 +100,6 @@ export default class Home extends Component<{}> {
         fetch(URL_WS + '/ws/get_productos_todos', parametros)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data)
                 this.setState({ productos_todos: data.productos, buscando: false })
             })
     }
