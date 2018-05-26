@@ -162,6 +162,7 @@ export default class Pedido extends Component<{}> {
             }
 
         })
+        console.log(Producto_Detalles)
         const parametros = {
             method: 'POST',
             headers: {

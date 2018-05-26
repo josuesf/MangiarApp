@@ -24,7 +24,8 @@ export default class Producto extends Component {
         var p = this.props.producto
         console.log(p)
         if (!p.id_detalle){
-            p.id_detalle=parseInt(p.producto_id+''+(store.getState().Nro_Pedido+1))
+            // p.id_detalle=parseInt(p.producto_id+''+(store.getState().Nro_Pedido+1))
+            p.id_detalle=this.props.cod_mesa+Date.now()
         }
         // if (!producto.id_detalle) {
             
@@ -56,7 +57,7 @@ export default class Producto extends Component {
         p.estado_detalle = 'PENDIENTE'
         p.cantidad = this.state.cantidad + 1
         p.cod_mesa = this.props.cod_mesa
-        p.numero =store.getState().Numero_Comprobante
+        p.numero = store.getState().Numero_Comprobante
         // var id_detalle = p.producto_id
         // var found = store.getState().productos.find(p => {
         //     return (p.id_detalle == id_detalle && p.estado_detalle == 'CONFIRMA');
@@ -141,7 +142,7 @@ export default class Producto extends Component {
 
                     <View style={{ flexDirection: 'column', marginHorizontal: 10, }}>
                         <Text style={{ color: '#95a5a6', fontWeight: 'bold' }}>{this.props.producto.nombre}</Text>
-                        <Text style={{ color: '#95a5a6', }}>{this.props.producto.simbolo + (parseFloat(this.props.producto.valor_precio)).toFixed(2)}</Text>
+                        {this.props.producto.precios<2 &&<Text style={{ color: '#95a5a6', }}>{this.props.producto.simbolo + (parseFloat(this.props.producto.valor_precio)).toFixed(2)}</Text>}
                     </View>
 
                 </View>

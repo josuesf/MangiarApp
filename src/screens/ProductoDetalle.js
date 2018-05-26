@@ -77,15 +77,15 @@ export default class ProductoDetalle extends Component<{}> {
             .then((response) => response.json())
             .then((data) => {
                 console.log(data)
-                if(!data.err){
-                precios = data.precios.filter((p, i) => {
-                    if (i == 0) p.seleccionado = true
-                    return p
-                })
-                this.setState({
-                    precios: precios
-                })
-                this.RecuperarOpcionales()
+                if (!data.err) {
+                    precios = data.precios.filter((p, i) => {
+                        if (i == 0) { p.seleccionado = true }
+                        return p
+                    })
+                    this.setState({
+                        precios: precios
+                    })
+                    this.RecuperarOpcionales()
                 }
             })
     }
@@ -107,11 +107,11 @@ export default class ProductoDetalle extends Component<{}> {
             .then((data) => {
                 console.log(data)
                 if (!data.err) {
-                    var opciones = data.combinaciones.filter(c=>{
-                        c.valor_precio=parseFloat(c.valor_precio)
+                    var opciones = data.combinaciones.filter(c => {
+                        c.valor_precio = parseFloat(c.valor_precio)
                         return c
                     })
-                    if (opciones.length == 0 && this.state.precios.length==0) {
+                    if (opciones.length == 0 && this.state.precios.length == 0) {
                         var found = store.getState().productos.find(p => {
                             return (p.producto_id == producto.producto_id && p.cod_mesa == cod_mesa);
                         });
@@ -120,7 +120,10 @@ export default class ProductoDetalle extends Component<{}> {
                         } else
                             this.setState({ total: parseFloat(producto.valor_precio), buscando: false })
                     } else {
-                        this.setState({ total: parseFloat(producto.valor_precio), opciones, buscando: false })
+                        if (this.state.precios < 2)
+                            this.setState({ total: parseFloat(producto.valor_precio), opciones, buscando: false })
+                        else
+                            this.setState({ total: parseFloat(this.state.precios.find(p => p.seleccionado == true).valor_precio), opciones, buscando: false })
                     }
                 }
 
@@ -233,8 +236,8 @@ export default class ProductoDetalle extends Component<{}> {
                 return v
             })
         }, () => this.setState({
-            total: this.state.cantidad * ( (!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? b.valor_precio : 0), 0)) +
-                this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * b.valor_precio) : 0), 0))
+            total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? parseFloat(b.valor_precio) : 0), 0)) +
+                this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * parseFloat(b.valor_precio)) : 0), 0))
         }))
     }
     OnPresRestarProducto = (detalle_id) => {
@@ -249,12 +252,12 @@ export default class ProductoDetalle extends Component<{}> {
                 return v
             })
         }, () => this.setState({
-            total: this.state.cantidad * ( (!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? b.valor_precio : 0), 0)) +
-                this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * b.valor_precio) : 0), 0))
+            total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? parseFloat(b.valor_precio) : 0), 0)) +
+                this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * parseFloat(b.valor_precio)) : 0), 0))
         }))
     }
     SeleccionarCheck = (detalle_id) => {
-        // console.log(this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * b.valor_precio) : 0), 0))
+        // console.log(this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * parseFloat(b.valor_precio)) : 0), 0))
         var { producto, cod_mesa } = this.props.navigation.state.params
         const hay_precios = this.state.precios.length > 1
         opciones = this.state.opciones
@@ -268,8 +271,8 @@ export default class ProductoDetalle extends Component<{}> {
                 return v
             })
         }, () => this.setState({
-            total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? b.valor_precio : 0), 0)) +
-                this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * b.valor_precio) : 0), 0))
+            total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? parseFloat(b.valor_precio) : 0), 0)) +
+                this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * parseFloat(b.valor_precio)) : 0), 0))
         }))
     }
     SeleccionarRadioButton = (detalle_id, combinacion_id) => {
@@ -290,8 +293,8 @@ export default class ProductoDetalle extends Component<{}> {
                     return v
                 })
             }, () => this.setState({
-                total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? b.valor_precio : 0), 0)) +
-                     this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * parseFloat(b.valor_precio)) : 0), 0))
+                total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? parseFloat(b.valor_precio) : 0), 0)) +
+                    this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * parseFloat(parseFloat(b.valor_precio))) : 0), 0))
             }))
         })
     }
@@ -312,8 +315,8 @@ export default class ProductoDetalle extends Component<{}> {
         }, () =>
                 this.setState({
                     total: this.state.cantidad *
-                        ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? b.valor_precio : 0), 0)) +
-                            this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * b.valor_precio) : 0), 0))
+                        ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? parseFloat(b.valor_precio) : 0), 0)) +
+                            this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * parseFloat(b.valor_precio)) : 0), 0))
                 }))
 
     }
@@ -340,18 +343,19 @@ export default class ProductoDetalle extends Component<{}> {
         //     estado_detalle : 'PENDIENTE'
         // }
         let p = {
-                //id_detalle : parseInt(producto.id_detalle + '' + store.getState().Nro_Pedido) + 1,
-                id_detalle:parseInt(producto.producto_id+''+(store.getState().Nro_Pedido+1)),
-                almacen_cod: producto.almacen_cod,
-                cod_marca: producto.cod_marca,
-                cod_moneda: producto.cod_moneda,
-                producto_id: producto.producto_id,
-                nombre: producto.nombre+nombre_precio,
-                valor_precio: producto.valor_precio,
-                simbolo: producto.simbolo,
-                imagen_url:producto.imagen_url,
-                estado_detalle: 'PENDIENTE'
-            }
+            //id_detalle : parseInt(producto.id_detalle + '' + store.getState().Nro_Pedido) + 1,
+            // id_detalle:parseInt(producto.producto_id+''+(store.getState().Nro_Pedido+1)),
+            id_detalle: cod_mesa + Date.now(),
+            almacen_cod: producto.almacen_cod,
+            cod_marca: producto.cod_marca,
+            cod_moneda: producto.cod_moneda,
+            producto_id: producto.producto_id,
+            nombre: producto.nombre + nombre_precio,
+            valor_precio: producto.valor_precio,
+            simbolo: producto.simbolo,
+            imagen_url: producto.imagen_url,
+            estado_detalle: 'PENDIENTE'
+        }
         // p=producto
         // p.nombre = producto.nombre+nombre_precio
         opciones = this.state.opciones.reverse()
@@ -365,12 +369,12 @@ export default class ProductoDetalle extends Component<{}> {
                 if (opciones[i + 1]) {
                     if (opciones[i + 1].combinacion_id != o.combinacion_id) {
                         o.Error = (cantidad_sel < o.cantidad_minima)
-                        o.ErrorMensaje = (cantidad_sel < o.cantidad_minima)?'Seleccione minimo '+o.cantidad_minima:''
+                        o.ErrorMensaje = (cantidad_sel < o.cantidad_minima) ? 'Seleccione minimo ' + o.cantidad_minima : ''
                         cantidad_sel = 0
                     }
                 } else {
                     o.Error = cantidad_sel < o.cantidad_minima
-                    o.ErrorMensaje = (cantidad_sel < o.cantidad_minima)?'Seleccione minimo '+o.cantidad_minima:''
+                    o.ErrorMensaje = (cantidad_sel < o.cantidad_minima) ? 'Seleccione minimo ' + o.cantidad_minima : ''
                     cantidad_sel = 0
                 }
 
@@ -383,7 +387,7 @@ export default class ProductoDetalle extends Component<{}> {
                 p.cantidad = this.state.cantidad
                 p.cod_mesa = cod_mesa
                 p.valor_precio = this.state.total / this.state.cantidad
-                p.numero =store.getState().Numero_Comprobante
+                p.numero = store.getState().Numero_Comprobante
 
                 if (this.state.opciones.length == 0 && !hay_precios) {
                     p.Id_Pedido = (p.producto_id).toString()
@@ -398,17 +402,17 @@ export default class ProductoDetalle extends Component<{}> {
                     //     return (p.id_detalle === id_detalle);
                     // });
                     // p.id_detalle = found?id_detalle+1:id_detalle
-                   
+
                     p.id_referencia = 0
                     //console.log(store.getState().productos[0].Id_Pedido)
                     store.dispatch({
                         type: 'ADD_PRODUCTO',
                         producto: p,
-                        producto_detalles: this.state.opciones.filter((o,i) => {
-                            if (o.seleccionado == true && o.cantidad>0) {
-                                o.id_detalle = p.id_detalle.toString()+i
-                                o.id_referencia = p.id_detalle
-                                o.cod_mesa =  cod_mesa
+                        producto_detalles: this.state.opciones.filter((o, i) => {
+                            if (o.seleccionado == true && o.cantidad > 0) {
+                                o.id_detalle = p.id_detalle.toString() + i
+                                o.id_referencia = p.id_detalle.toString()
+                                o.cod_mesa = cod_mesa
                                 o.estado_detalle = 'PENDIENTE'
                                 return o
                             }
@@ -429,8 +433,8 @@ export default class ProductoDetalle extends Component<{}> {
             cantidad: producto.cantidad
         }, () => {
             this.setState({
-                total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? b.valor_precio : 0), 0)) +
-                    this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * b.valor_precio) : 0), 0))
+                total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? parseFloat(b.valor_precio) : 0), 0)) +
+                    this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * parseFloat(b.valor_precio)) : 0), 0))
             })
         })
     }
@@ -443,8 +447,8 @@ export default class ProductoDetalle extends Component<{}> {
                 cantidad: producto.cantidad
             }, () => {
                 this.setState({
-                    total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? b.valor_precio : 0), 0)) +
-                        this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * b.valor_precio) : 0), 0))
+                    total: this.state.cantidad * ((!hay_precios ? parseFloat(producto.valor_precio) : this.state.precios.reduce((a, b) => a + (b.seleccionado == true ? parseFloat(b.valor_precio) : 0), 0)) +
+                        this.state.opciones.reduce((a, b) => a + (b.seleccionado ? (b.cantidad * parseFloat(b.valor_precio)) : 0), 0))
                 })
             })
         }

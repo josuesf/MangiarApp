@@ -3,6 +3,7 @@ import SocketIOClient from 'socket.io-client';
 import { URL_WS } from './Constantes';
 const reducer = (state, action) => {
     if (action.type === "ADD_PRODUCTO") {
+        console.log(action.producto_detalles)
         producto_detalles=[]
         if(action.producto_detalles) producto_detalles = action.producto_detalles
         var found = state.productos.find(p => {
