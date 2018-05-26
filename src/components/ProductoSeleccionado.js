@@ -24,7 +24,7 @@ export default class ProductoSeleccionado extends Component {
         super(props)
         this.state = {
             cantidad: this.props.producto.cantidad,
-            producto_detalles: store.getState().producto_detalles.filter(p => p.Id_Referencia == this.props.producto.id_detalle)
+            producto_detalles: store.getState().producto_detalles.filter(p => p.id_referencia == this.props.producto.id_detalle)
         }
     }
 
@@ -84,7 +84,7 @@ export default class ProductoSeleccionado extends Component {
                             <Text style={{ color: '#95a5a6', fontSize: 0, marginLeft: 2 }}>{moneda + (parseFloat(this.props.producto.valor_precio)).toFixed(2)}</Text>
                         </View>
 
-                        {this.state.producto_detalles.map((p, index) => <Text key={index} style={{ color: '#95a5a6', fontSize: 12 }} >{p.cantidad + " " + p.nombre + " S./" + p.valor_precio.toFixed(2)}</Text>)}
+                        {this.state.producto_detalles.map((p, index) => <Text key={index} style={{ color: '#95a5a6', fontSize: 12 }} >{p.cantidad + " " + p.nombre + " S./" + parseFloat(p.valor_precio).toFixed(2)}</Text>)}
 
 
                         {this.props.producto.estado_detalle !='CONFIRMA' && <View style={{ flexDirection: 'row', alignItems: 'center' }}>
