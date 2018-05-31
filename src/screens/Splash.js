@@ -16,12 +16,13 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation'
-import WifiManager from 'react-native-wifi-manager'
+import WifiManager from 'react-native-wifi';
 import Camera from 'react-native-camera'
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import { URL_WS } from '../Constantes'
 import store from '../store'
+
 export default class Splash extends Component<{}> {
     static navigationOptions = {
         header: null,
@@ -35,7 +36,7 @@ export default class Splash extends Component<{}> {
         this.state = {
             scanning: true,
             resultado: '',
-            Cod_Mesa: store.getState().Cod_Mesa,
+            cod_mesa: store.getState().cod_mesa,
             sin_acceso: false
         }
     }
@@ -45,32 +46,35 @@ export default class Splash extends Component<{}> {
             scanning: false,
             resultado: e.data,
             conectando: true,
-            Cod_Mesa: e.data.split(';')[2]
+            cod_mesa: e.data.split(';')[2]
         }, () => {
-            WifiManager.status((status) => {
-                if (status == 'CONNECTED') {
-                    this.RecuperarMesaByCod_Mesa(e.data.split(';')[2])
-                } else {
+            // WifiManager.status((status) => {
+            //     if (status == 'CONNECTED') {
+            //         this.RecuperarMesaByCod_Mesa(e.data.split(';')[2])
+            //     } else {
                     this.conectarToWifi(e.data.split(';')[0], e.data.split(';')[1], e.data.split(';')[2])
-                }
-            });
+            //     }
+            // });
 
         });
 
     }
-    conectarToWifi = (ssid, password, Cod_Mesa) => {
-        WifiManager.connect(ssid, password);
-        var verificarConexion = setInterval(() => {
-            WifiManager.status((status) => {
-                if (status == 'CONNECTED') {
-                    clearInterval(verificarConexion)
-                    this.RecuperarMesaByCod_Mesa(Cod_Mesa)
-                }
-            });
-        }, 1000)
+    conectarToWifi = (ssid, password, cod_mesa) => {
+        WifiManager.connectToProtectedSSID(ssid, password,false)
+        .then((msg) => {
+            var verificarConexion = setInterval(() => {
+                WifiManager.connectionStatus((status) => {
+                    if (status) {
+                        clearInterval(verificarConexion)
+                        this.RecuperarMesaByCod_Mesa(cod_mesa)
+                    }
+                });
+            }, 1000)
+        })
+        
     }
 
-    RecuperarMesaByCod_Mesa = (Cod_Mesa) => {
+    RecuperarMesaByCod_Mesa = (cod_mesa) => {
         this.setState({ conectando: true })
         const parametros = {
             method: 'POST',
@@ -82,18 +86,18 @@ export default class Splash extends Component<{}> {
                 usuario: store.getState().nombre_usuario
             })
         }
-        fetch(URL_WS + '/get_mesas_estado', parametros)
+        fetch(URL_WS + '/ws/get_puntos_venta', parametros)
             .then((response) => response.json())
             .then((data) => {
-                this.setState({ conectando: false, mesas: data.mesas })
-                var m = data.mesas.find(p => {
-                    return (p.Cod_Mesa == Cod_Mesa);
+                this.setState({ conectando: false, mesas: data.puntos_venta })
+                var m = data.puntos_venta.find(p => {
+                    return (p.cod_mesa == cod_mesa);
                 });
-                this.SeleccionarMesa(m.Cod_Mesa, m.Nom_Mesa, m.Estado_Mesa)
+                this.SeleccionarMesa(m.cod_mesa, m.nombre_mesa, m.estado_accion)
             })
     }
 
-    SeleccionarMesa = (Cod_Mesa, Nom_Mesa, Estado_Mesa) => {
+    SeleccionarMesa = (cod_mesa, nombre_mesa, estado_accion) => {
 
         const parametros = {
             method: 'POST',
@@ -102,28 +106,28 @@ export default class Splash extends Component<{}> {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                Cod_Mesa: Cod_Mesa
+                cod_mesa: cod_mesa
             })
         }
-        fetch(URL_WS + '/get_productos_by_mesa', parametros)
+        fetch(URL_WS + '/ws/get_productos_by_mesa', parametros)
             .then((response) => response.json())
             .then((data) => {
                 this.setState({ conectando: false })
                 store.dispatch({
                     type: 'MESA_SELECCIONADA',
-                    Cod_Mesa: Cod_Mesa,
-                    Nom_Mesa: Nom_Mesa
+                    cod_mesa: cod_mesa,
+                    nombre_mesa: nombre_mesa
                 })
                 store.dispatch({
                     type: 'ADD_PRODUCTOS_SELECCIONADOS',
-                    productos: data.productos_selec.filter(p => p.Id_Referencia == 0),
-                    producto_detalles: data.productos_selec.filter(p => p.Id_Referencia != 0)
+                    productos: data.productos_selec.filter(p => p.id_referencia == 0),
+                    producto_detalles: data.productos_selec.filter(p => p.id_referencia != 0)
                 })
                 //if (data.productos_selec.length > 0) {
 
                 store.dispatch({
                     type: 'ADD_NUMERO_COMPROBANTE',
-                    Numero_Comprobante: data.productos_selec.length > 0 ? data.productos_selec[0].Numero : '',
+                    Numero_Comprobante: data.productos_selec.length > 0 ? data.productos_selec[0].numero : '',
                 })
 
                 //this.props.navigation.navigate('main', { productos_selec: data.productos_selec })
@@ -149,8 +153,8 @@ export default class Splash extends Component<{}> {
                 ]
             })
             this.props.navigation.dispatch(vista_mesas)
-        } else if (store.getState().tipo_usuario != 'EMPLEADO' && store.getState().Cod_Mesa && store.getState().socket.connected) {
-            this.RecuperarMesaByCod_Mesa(store.getState().Cod_Mesa)
+        } else if (store.getState().tipo_usuario != 'EMPLEADO' && store.getState().cod_mesa && store.getState().socket.connected) {
+            this.RecuperarMesaByCod_Mesa(store.getState().cod_mesa)
         } else {
             this.setState({ sin_acceso: true })
         }
@@ -158,6 +162,7 @@ export default class Splash extends Component<{}> {
     LoginPersonal = () => {
         this.props.navigation.navigate('login', { tipo_logueo: 'empleado' })
     }
+    
     render() {
         const { navigate } = this.props.navigation;
         return (

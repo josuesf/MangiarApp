@@ -3,7 +3,8 @@ package com.mangiar;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.skierkowski.WifiManager.WifiManager;
+import com.reactlibrary.RNWifiPackage;
+// import com.skierkowski.WifiManager.WifiManager;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.facebook.react.ReactNativeHost;
@@ -26,7 +27,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new WifiManager(),
+            new RNWifiPackage(),
+            // new WifiManager(),
             new VectorIconsPackage(),
             new RCTCameraPackage()
       );

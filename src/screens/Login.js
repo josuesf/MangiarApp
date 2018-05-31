@@ -19,12 +19,10 @@ import {
     Alert,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation'
-import WifiManager from 'react-native-wifi-manager'
 import Camera from 'react-native-camera'
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import { URL_WS } from '../Constantes'
 import store from '../store'
-
 export default class Login extends Component<{}> {
     static navigationOptions = {
         header: null,
