@@ -22,7 +22,6 @@ export default class Producto extends Component {
     }
     AgregarProducto = () => {
         var p = this.props.producto
-        console.log(p)
         if (!p.id_detalle){
             // p.id_detalle=parseInt(p.producto_id+''+(store.getState().Nro_Pedido+1))
             p.id_detalle=this.props.cod_mesa+Date.now()

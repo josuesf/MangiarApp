@@ -81,6 +81,7 @@ export default class Pedido extends Component<{}> {
                 })
             }
         })
+        console.log(this.state.productos[0].cod_moneda)
     }
     HacerPedido = () => {
         this.setState({ cargando: true })
@@ -162,7 +163,6 @@ export default class Pedido extends Component<{}> {
             }
 
         })
-        console.log(Producto_Detalles)
         const parametros = {
             method: 'POST',
             headers: {

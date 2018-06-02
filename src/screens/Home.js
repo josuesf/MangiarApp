@@ -135,15 +135,15 @@ export default class Home extends Component<{}> {
                 />
                 <View style={{ height: 60, flexDirection: 'row', alignItems: 'center', backgroundColor: '#40407a', justifyContent: 'center' }}>
                     {store.getState().tipo_usuario=='EMPLEADO' && <TouchableOpacity onPress={()=>goBack()} style={{ paddingHorizontal: 10 }}>
-                        <IconMaterial color={'#ffeaa7'} name='arrow-left' size={25} />
+                        <IconMaterial color={'#55efc4'} name='arrow-left' size={25} />
                     </TouchableOpacity>}
-                    <View style={{flex: 1, marginHorizontal: 10}}>
-                        <Text style={{ color: '#ffeaa7', fontWeight: 'bold' }}>{store.getState().nombre_mesa}</Text>
-                        <Text style={{ color: '#ffeaa7' }}>Cuenta {store.getState().Numero_Comprobante}</Text>
+                    <View style={{flex: 1, marginHorizontal: 20}}>
+                        <Text style={{ color: '#55efc4', fontWeight: 'bold' }}>{store.getState().nombre_mesa}</Text>
+                        <Text style={{ color: '#55efc4' }}>Cuenta {store.getState().Numero_Comprobante}</Text>
                     </View>
                     {store.getState().Numero_Comprobante!='' && store.getState().tipo_usuario=='EMPLEADO' &&
                     <TouchableOpacity onPress={()=>this.setState({OpcionesVisible:true})} style={{ paddingHorizontal: 10 }}>
-                        <IconMaterial color={'#ffeaa7'} name='dots-vertical' size={25} />
+                        <IconMaterial color={'#55efc4'} name='dots-vertical' size={25} />
                     </TouchableOpacity>}
                 </View>
                 <ProgressDialog

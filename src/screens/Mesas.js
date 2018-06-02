@@ -44,6 +44,7 @@ export default class Mesas extends Component<{}> {
             Height_Layout: '',
             Width_Layout: '',
             cuentas_mesa:[],
+            refreshing: false,
         }
     }
     componentWillMount() {
@@ -178,6 +179,9 @@ export default class Mesas extends Component<{}> {
             });
         }
     }
+    _onRefresh = () => {
+        this.BuscarMesas()
+    }
     render() {
         const { navigate } = this.props.navigation;
         const { params } = this.props.navigation.state
@@ -213,11 +217,14 @@ export default class Mesas extends Component<{}> {
                         style={{ marginBottom: 20 }}
                         data={this.state.mesas}
                         numColumns={3}
+                        
                         keyExtractor={(item, index) => index}
                         renderItem={({ item }) => (
                             <Mesa width_state={this.state.Width_Layout} height_state={this.state.Height_Layout} mesa={item}
                                 SeleccionarMesa={() => this.SeleccionarMesa(item.cod_mesa, item.nombre_mesa, item.estado_accion)} />
                         )}
+                        refreshing={this.state.refreshing}
+                        onRefresh={this._onRefresh} 
                     />
                 </View>
                 <Dialog
