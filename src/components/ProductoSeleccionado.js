@@ -61,6 +61,11 @@ export default class ProductoSeleccionado extends Component {
         })
         this.setState({ preguntaEliminar: false })
     }
+    componentWillMount(){
+        AsyncStorage.getItem('HOST_CONFIG').then(val=>{
+            this.setState({URL_WS:val!=null?val:URL_WS})
+        })
+    }
     render() {
         const moneda = 'S/. '
         const { producto_detalles } = this.state
@@ -69,7 +74,7 @@ export default class ProductoSeleccionado extends Component {
                 <View style={{ flexDirection: 'row', flex: 4, alignItems: 'center' }}>
 
                     <Image
-                        source={{ uri: URL_WS+'/images/'+this.props.producto.imagen_url }}
+                        source={{ uri: this.state.URL_WS+'/images/'+this.props.producto.imagen_url }}
                         //source={require('../images/plato_default.png')}
                         style={{
                             marginLeft: 10,
@@ -79,8 +84,8 @@ export default class ProductoSeleccionado extends Component {
 
                     <View style={{ flexDirection: 'column', marginHorizontal: 10, }}>
                         <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                            {this.props.producto.estado_detalle =='CONFIRMA' && <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#95a5a6' }} >{this.state.cantidad+" "}</Text>}
-                            <Text style={{ color: '#95a5a6', fontWeight: 'bold' }}>{this.props.producto.nombre}</Text>
+                            {this.props.producto.estado_detalle =='CONFIRMA' && <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#95a5a6' }} >{"("+this.state.cantidad+") "}</Text>}
+                            <Text style={{ color: '#95a5a6', fontWeight: 'bold', marginRight: 40 }}>{this.props.producto.nombre}</Text>
                             <Text style={{ color: '#95a5a6', fontSize: 0, marginLeft: 2 }}>{moneda + (parseFloat(this.props.producto.valor_precio)).toFixed(2)}</Text>
                         </View>
 

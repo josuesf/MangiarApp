@@ -22,7 +22,7 @@ import { NavigationActions } from 'react-navigation'
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFondation from 'react-native-vector-icons/Foundation'
-import { ProgressDialog,Dialog } from 'react-native-simple-dialogs';
+import { ProgressDialog, Dialog } from 'react-native-simple-dialogs';
 import Producto from '../components/Producto'
 import store from '../store'
 import { URL_WS } from '../Constantes'
@@ -49,11 +49,13 @@ export default class Home extends Component<{}> {
         }
     }
     componentWillMount() {
-        this.RecuperarCategorias_Todas()
-        this.RecuperarProductos_Todos()
-        this.CalcularTotal()
-        console.log(store.getState().Numero_Comprobante)
-        console.log(store.getState().productos)
+        AsyncStorage.getItem('HOST_CONFIG').then(val => {
+            this.setState({ URL_WS: val != null ? val : URL_WS }, () => {
+                this.RecuperarCategorias_Todas()
+                this.RecuperarProductos_Todos()
+                this.CalcularTotal()
+            })
+        })
     }
     componentDidMount() {
         store.subscribe(() => {
@@ -62,7 +64,7 @@ export default class Home extends Component<{}> {
         })
     }
     CalcularTotal = () => {
-        productos = store.getState().productos.filter(p => p.cod_mesa == store.getState().cod_mesa && p.numero==store.getState().Numero_Comprobante)
+        productos = store.getState().productos.filter(p => p.cod_mesa == store.getState().cod_mesa && p.numero == store.getState().Numero_Comprobante)
         this.setState({
             total: productos.reduce((a, b) => a + (b.valor_precio * b.cantidad), 0),
             cantidad_items: productos.reduce((a, b) => a + (b.cantidad), 0),
@@ -79,7 +81,7 @@ export default class Home extends Component<{}> {
             },
             body: JSON.stringify({})
         }
-        fetch(URL_WS + '/ws/get_categorias_todas', parametros)
+        fetch(this.state.URL_WS + '/ws/get_categorias_todas', parametros)
             .then((response) => response.json())
             .then((data) => {
                 this.setState({
@@ -97,7 +99,7 @@ export default class Home extends Component<{}> {
             },
             body: JSON.stringify({})
         }
-        fetch(URL_WS + '/ws/get_productos_todos', parametros)
+        fetch(this.state.URL_WS + '/ws/get_productos_todos', parametros)
             .then((response) => response.json())
             .then((data) => {
                 this.setState({ productos_todos: data.productos, buscando: false })
@@ -114,11 +116,11 @@ export default class Home extends Component<{}> {
         })
         this.setState({ categorias: [], productos: [] }, () => this.setState({ categorias: categorias, productos: this.state.productos_todos.filter(p => p.cod_categoria == cod_categoria) }))
     }
-    NuevaCuenta=()=>{
-        this.setState({OpcionesVisible:false})
+    NuevaCuenta = () => {
+        this.setState({ OpcionesVisible: false })
         const nuevo = NavigationActions.back({
-            key:'main',
-          });
+            key: 'main',
+        });
         store.dispatch({
             type: 'ADD_NUMERO_COMPROBANTE',
             Numero_Comprobante: '',
@@ -126,7 +128,7 @@ export default class Home extends Component<{}> {
         this.props.navigation.dispatch(nuevo)
     }
     render() {
-        const { navigate,goBack } = this.props.navigation;
+        const { navigate, goBack } = this.props.navigation;
         return (
             <View style={styles.container}>
                 <StatusBar
@@ -134,17 +136,17 @@ export default class Home extends Component<{}> {
                     barStyle="default"
                 />
                 <View style={{ height: 60, flexDirection: 'row', alignItems: 'center', backgroundColor: '#40407a', justifyContent: 'center' }}>
-                    {store.getState().tipo_usuario=='EMPLEADO' && <TouchableOpacity onPress={()=>goBack()} style={{ paddingHorizontal: 10 }}>
+                    {store.getState().tipo_usuario == 'EMPLEADO' && <TouchableOpacity onPress={() => goBack()} style={{ paddingHorizontal: 10 }}>
                         <IconMaterial color={'#55efc4'} name='arrow-left' size={25} />
                     </TouchableOpacity>}
-                    <View style={{flex: 1, marginHorizontal: 20}}>
+                    <View style={{ flex: 1, marginHorizontal: 20 }}>
                         <Text style={{ color: '#55efc4', fontWeight: 'bold' }}>{store.getState().nombre_mesa}</Text>
                         <Text style={{ color: '#55efc4' }}>Cuenta {store.getState().Numero_Comprobante}</Text>
                     </View>
-                    {store.getState().Numero_Comprobante!='' && store.getState().tipo_usuario=='EMPLEADO' &&
-                    <TouchableOpacity onPress={()=>this.setState({OpcionesVisible:true})} style={{ paddingHorizontal: 10 }}>
-                        <IconMaterial color={'#55efc4'} name='dots-vertical' size={25} />
-                    </TouchableOpacity>}
+                    {store.getState().Numero_Comprobante != '' && store.getState().tipo_usuario == 'EMPLEADO' &&
+                        <TouchableOpacity onPress={() => this.setState({ OpcionesVisible: true })} style={{ paddingHorizontal: 10 }}>
+                            <IconMaterial color={'#55efc4'} name='dots-vertical' size={25} />
+                        </TouchableOpacity>}
                 </View>
                 <ProgressDialog
                     activityIndicatorColor={"#9b59b6"}
@@ -169,7 +171,7 @@ export default class Home extends Component<{}> {
                         {this.state.categorias.map((c, index) =>
                             <View key={c.cod_categoria}>
                                 <TouchableOpacity onPress={() => this.SeleccionarCategoriaHija(c.cod_categoria, c.Seleccionado)}
-                                    activeOpacity={0.7} style={{ backgroundColor: '#FFF', flexDirection: 'row', alignItems: 'center', marginRight: 1,marginVertical:10 }}>
+                                    activeOpacity={0.7} style={{ backgroundColor: '#FFF', flexDirection: 'row', alignItems: 'center', marginRight: 1, marginVertical: 10 }}>
                                     {/* <Image source={{uri:URL_WS+'/images/'+c.imagen_url}}  style={{height:60,width:60,borderRadius:5,marginHorizontal:5}}/> */}
                                     <Text style={{ color: c.Seleccionado == 1 ? '#1abc9c' : '#95a5a6', flex: 1, fontWeight: 'bold', paddingHorizontal: 5, marginLeft: 10, paddingVertical: 10 }}>{c.nombre_categoria}</Text>
                                     <IconMaterial
@@ -222,7 +224,7 @@ export default class Home extends Component<{}> {
                             <Text style={{ fontWeight: 'bold', color: 'gray' }}>Crear nueva cuenta</Text>
                         </TouchableOpacity>
                     </View>
-                </Dialog>             
+                </Dialog>
 
 
             </View>

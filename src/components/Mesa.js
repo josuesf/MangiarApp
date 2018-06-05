@@ -12,7 +12,6 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-import { URL_WS } from '../Constantes';
 import store from '../store'
 const { width, height } = Dimensions.get('window')
 const AVATAR_SIZE = 64

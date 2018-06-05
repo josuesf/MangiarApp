@@ -60,6 +60,9 @@ export default class Pedido extends Component<{}> {
         }
     }
     componentWillMount() {
+        AsyncStorage.getItem('HOST_CONFIG').then(val => {
+            this.setState({ URL_WS: val != null ? val : URL_WS })
+        })
         this.props.navigation.setParams({ AbrirOpciones: this._AbrirOpciones });
     }
     _AbrirOpciones = () => {
@@ -116,7 +119,7 @@ export default class Pedido extends Component<{}> {
                 estado_accion: 'PENDIENTE'
             })
         }
-        fetch(URL_WS + '/hacer_pedido_sql', parametros)
+        fetch(this.state.URL_WS + '/hacer_pedido_sql', parametros)
             .then((response) => response.json())
             .then((data) => {
                 if (data.respuesta == 'ok') {
@@ -181,7 +184,7 @@ export default class Pedido extends Component<{}> {
                 estado_pedido: 'OCUPADO',
             })
         }
-        fetch(URL_WS + '/ws/confirmar_ecaja_pedido', parametros)
+        fetch(this.state.URL_WS + '/ws/confirmar_ecaja_pedido', parametros)
             .then((response) => response.json())
             .then((data) => {
                 if (!data.err) {
@@ -242,7 +245,7 @@ export default class Pedido extends Component<{}> {
                 estado_accion: 'OCUPADO',
             })
         }
-        fetch(URL_WS + '/impresion_nota_venta', parametros)
+        fetch(this.state.URL_WS + '/impresion_nota_venta', parametros)
             .then((response) => response.json())
             .then((data) => {
                 if (data.respuesta == 'ok') {
@@ -269,7 +272,7 @@ export default class Pedido extends Component<{}> {
                 Cod_Vendedor: store.getState().id_usuario,
             })
         }
-        fetch(URL_WS + '/Liberar_Terminar_Mesa', parametros)
+        fetch(this.state.URL_WS + '/Liberar_Terminar_Mesa', parametros)
             .then((response) => response.json())
             .then((data) => {
                 if (data.respuesta == "ok") {
@@ -303,7 +306,7 @@ export default class Pedido extends Component<{}> {
                 numero: store.getState().Numero_Comprobante,
             })
         }
-        fetch(URL_WS + '/Cancelar_Mesa_Pedido', parametros)
+        fetch(this.state.URL_WS + '/Cancelar_Mesa_Pedido', parametros)
             .then((response) => response.json())
             .then((data) => {
                 if (data.respuesta == "ok") {

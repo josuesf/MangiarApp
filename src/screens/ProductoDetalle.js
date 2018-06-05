@@ -57,8 +57,11 @@ export default class ProductoDetalle extends Component<{}> {
         }
     }
     componentWillMount() {
-        this.RecuperarPrecios()
-
+        AsyncStorage.getItem('HOST_CONFIG').then(val => {
+            this.setState({ URL_WS: val != null ? val : URL_WS }, () => {
+                this.RecuperarPrecios()
+            })
+        })
     }
     RecuperarPrecios = () => {
         const { producto } = this.props.navigation.state.params
@@ -73,10 +76,9 @@ export default class ProductoDetalle extends Component<{}> {
                 producto_id: producto.producto_id
             })
         }
-        fetch(URL_WS + '/ws/get_precios_producto', parametros)
+        fetch(this.state.URL_WS + '/ws/get_precios_producto', parametros)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data)
                 if (!data.err) {
                     precios = data.precios.filter((p, i) => {
                         if (i == 0) { p.seleccionado = true }
@@ -102,10 +104,9 @@ export default class ProductoDetalle extends Component<{}> {
                 producto_id: producto.producto_id
             })
         }
-        fetch(URL_WS + '/ws/get_combinaciones_producto', parametros)
+        fetch(this.state.URL_WS + '/ws/get_combinaciones_producto', parametros)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data)
                 if (!data.err) {
                     var opciones = data.combinaciones.filter(c => {
                         c.valor_precio = parseFloat(c.valor_precio)

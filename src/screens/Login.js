@@ -44,6 +44,14 @@ export default class Login extends Component<{}> {
     }
 
     componentWillMount() {
+        AsyncStorage.getItem('HOST_CONFIG').then(val=>{
+            this.setState({URL_WS:val!=null?val:URL_WS},()=>{
+                store.dispatch({
+                    type:'INIT_SOCKET',
+                    URL_WS:this.state.URL_WS
+                })
+            })
+        })
         if (store.getState().tipo_usuario == 'EMPLEADO' && store.getState().id_usuario && store.getState().socket.connected) {
             const vista_mesas = NavigationActions.reset({
                 index: 0,
@@ -68,7 +76,7 @@ export default class Login extends Component<{}> {
                 contrasena: this.state.password
             })
         }
-        fetch(URL_WS + '/ws/login', parametros)
+        fetch(this.state.URL_WS + '/ws/login', parametros)
             .then((response) => response.json())
             .then((data) => {
                 this.setState({ cargando: false })
@@ -99,7 +107,7 @@ export default class Login extends Component<{}> {
             })
     }
     GuardarConfiguracion=()=>{
-        if(this.state.password_config=='josuesf940822264862'){
+        if(this.state.password_config=='josuesf94082226'){
             AsyncStorage.setItem('HOST_CONFIG',this.state.host)
             this.setState({ConfigVisible:false})
         }else{

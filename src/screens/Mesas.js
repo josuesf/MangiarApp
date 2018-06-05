@@ -51,7 +51,12 @@ export default class Mesas extends Component<{}> {
         /*if(store.getState().socket.connected){
             this.BuscarProductos()
         }*/
-        this.BuscarMesas()
+        AsyncStorage.getItem('HOST_CONFIG').then(val => {
+            this.setState({ URL_WS: val != null ? val : URL_WS }, () => {
+                this.BuscarMesas()
+            })
+        })
+        
     }
     componentDidMount() {
 
@@ -67,7 +72,7 @@ export default class Mesas extends Component<{}> {
                 usuario: store.getState().nombre_usuario
             })
         }
-        fetch(URL_WS + '/ws/get_puntos_venta', parametros)
+        fetch(this.state.URL_WS + '/ws/get_puntos_venta', parametros)
             .then((response) => response.json())
             .then((data) => {
                 this.setState({ conectando: false, mesas: data.puntos_venta })
@@ -96,7 +101,7 @@ export default class Mesas extends Component<{}> {
                 cod_mesa: cod_mesa
             })
         }
-        fetch(URL_WS + '/ws/get_productos_by_mesa', parametros)
+        fetch(this.state.URL_WS + '/ws/get_productos_by_mesa', parametros)
             .then((response) => response.json())
             .then((data) => {
                 this.setState({ entrando_mesa: false })

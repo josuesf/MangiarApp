@@ -1,6 +1,5 @@
 import { createStore } from 'redux'
 import SocketIOClient from 'socket.io-client';
-import { URL_WS } from './Constantes';
 const reducer = (state, action) => {
     if (action.type === "ADD_PRODUCTO") {
         producto_detalles=[]
@@ -130,11 +129,18 @@ const reducer = (state, action) => {
             producto_detalles:state.producto_detalles.filter(p=>p.numero!=action.numero)
         }
     }
+    if(action.type=="INIT_SOCKET"){
+        return {
+            ...state,
+            last_event: 'INIT_SOCKET',
+            socket: !state.socket?SocketIOClient(action.URL_WS):state.socket,
+        }
+    }
     return state
 }
 export default createStore(reducer,
     {
-        socket: SocketIOClient(URL_WS),
+        // socket: SocketIOClient(GET_URL_WS()),
         productos: [],
         producto_detalles:[],
         last_event: '',
