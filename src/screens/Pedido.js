@@ -245,7 +245,7 @@ export default class Pedido extends Component<{}> {
                 estado_accion: 'OCUPADO',
             })
         }
-        fetch(this.state.URL_WS + '/impresion_nota_venta', parametros)
+        fetch(this.state.URL_WS + '/ws/impresion_nota_venta', parametros)
             .then((response) => response.json())
             .then((data) => {
                 if (data.respuesta == 'ok') {

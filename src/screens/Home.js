@@ -189,7 +189,7 @@ export default class Home extends Component<{}> {
                                         <FlatList
                                             data={this.state.productos}
                                             renderItem={({ item }) => (
-                                                <Producto producto={item} cod_mesa={store.getState().cod_mesa} navigate={navigate} />
+                                                <Producto producto={item} URL_WS={this.state.URL_WS} cod_mesa={store.getState().cod_mesa} navigate={navigate} />
                                             )}
                                             keyExtractor={(item, index) => index}
                                         />

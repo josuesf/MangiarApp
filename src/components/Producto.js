@@ -92,7 +92,6 @@ export default class Producto extends Component {
         AsyncStorage.getItem('HOST_CONFIG').then(val=>{
             this.setState({URL_WS:val!=null?val:URL_WS})
         })
-        console.log(this.props.producto)
         var found = store.getState().productos.find(p => {
             return (p.estado_detalle != 'CONFIRMA' && p.producto_id == this.props.producto.producto_id && p.cod_mesa == this.props.cod_mesa);
         });
@@ -129,12 +128,13 @@ export default class Producto extends Component {
     }
     render() {
         const moneda = 'S/. '
+        console.log(this.props.URL_WS)
         return (
             <View ref="root" style={styles.container}>
                 <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', marginBottom: 0, marginTop: 5, padding: 5 }}>
 
                     <Image
-                        source={{ uri: this.state.URL_WS+'/images/'+this.props.producto.imagen_url }}
+                        source={{ uri: this.props.URL_WS+'/images/'+this.props.producto.imagen_url }}
                         //source={require('../images/plato_default.png')}
                         style={{
                             marginLeft: 10,
