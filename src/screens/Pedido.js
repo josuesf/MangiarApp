@@ -175,7 +175,7 @@ export default class Pedido extends Component<{}> {
             body: JSON.stringify({
                 cod_mesa: store.getState().cod_mesa,
                 productos: Producto.concat(Producto_Detalles),
-                cod_moneda: this.state.productos[0].cod_moneda,
+                cod_moneda: 'PEN',//this.state.productos[0].cod_moneda,
                 numero: this.state.Numero_Comprobante,
                 nombre_cliente: this.state.Nom_Cliente,
                 total: this.state.productos.reduce((a, b) => a + (b.valor_precio * b.cantidad), 0),//+ Producto_Detalles.reduce((a, b) => a + (b.valor_precio * b.cantidad), 0),
