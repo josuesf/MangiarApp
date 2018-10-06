@@ -16,7 +16,7 @@ import {
     ScrollView,
 } from 'react-native';
 
-export default class BusquedaDoc extends Component<{}> {
+export default class BusquedaDoc extends Component{
     constructor() {
         super()
         this.state = {

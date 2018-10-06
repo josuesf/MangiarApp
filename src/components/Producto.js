@@ -23,45 +23,12 @@ export default class Producto extends Component {
     AgregarProducto = () => {
         var p = this.props.producto
         if (!p.id_detalle){
-            // p.id_detalle=parseInt(p.producto_id+''+(store.getState().Nro_Pedido+1))
             p.id_detalle=this.props.cod_mesa+Date.now()
         }
-        // if (!producto.id_detalle) {
-            
-        //     var id_detalle = producto.producto_id
-        //     var found = store.getState().productos.find(p => {
-        //         return (p.id_detalle == id_detalle && p.estado_detalle == 'CONFIRMA');
-        //     });
-        //     if (found) {
-        //         p = {
-        //             id_detalle : parseInt(producto.id_detalle + '' + store.getState().Nro_Pedido) + 1,
-        //             almacen_cod: producto.almacen_cod,
-        //             cod_marca: producto.cod_marca,
-        //             cod_moneda: producto.cod_moneda,
-        //             produto_id: producto.producto_id,
-        //             nombre: producto.nombre,
-        //             valor_precio: producto.valor_precio,
-        //             simbolo: producto.simbolo,
-        //             estado_detalle: 'PENDIENTE'
-        //         }
-        //         producto.id_detalle = p.id_detalle
-        //     }else{
-        //         p=producto
-        //         p.id_detalle=producto.producto_id
-                
-        //     }
-        // }else{
-        //     p=producto
-        // }
         p.estado_detalle = 'PENDIENTE'
         p.cantidad = this.state.cantidad + 1
         p.cod_mesa = this.props.cod_mesa
         p.numero = store.getState().Numero_Comprobante
-        // var id_detalle = p.producto_id
-        // var found = store.getState().productos.find(p => {
-        //     return (p.id_detalle == id_detalle && p.estado_detalle == 'CONFIRMA');
-        // });
-        // p.id_detalle = found ? parseInt(p.producto_id + '' + store.getState().Nro_Pedido) + 1 : id_detalle
         this.setState({
             cantidad: p.cantidad
         }, () => {

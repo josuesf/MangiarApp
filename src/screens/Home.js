@@ -27,7 +27,7 @@ import Producto from '../components/Producto'
 import store from '../store'
 import { URL_WS } from '../Constantes'
 const { width, height } = Dimensions.get('window')
-export default class Home extends Component<{}> {
+export default class Home extends Component {
     static navigationOptions = {
         title: 'Productos',
         headerTintColor: '#55efc4',
